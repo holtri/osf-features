@@ -30,7 +30,7 @@ def calculate_osf(filename):
     else:
         out = pd.DataFrame()
 
-    for k in K_RANGE:
+    for k in [x for x in K_RANGE if x < out.shape[0]]:
         for name, cmd in algorithms.items():
             result = subprocess.run(
                 ['java', '-jar', ELKI_EXECUTABLE, 'KDDCLIApplication', '-dbc.in', filename, '-time', '-algorithm', cmd['name'],
