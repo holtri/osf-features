@@ -1,5 +1,6 @@
 from config import *
 import pandas as pd
+import numpy as np
 import os
 import subprocess
 import glob
@@ -37,6 +38,8 @@ def calculate_osf(filename):
                  '-evaluator', 'NoAutomaticEvaluation', '-resulthandler', 'tutorial.outlier.SimpleScoreDumper'],
                 stdout=subprocess.PIPE, universal_newlines=True)
             scores = [x.split(' ')[1] for x in result.stdout.split('\n')[0:-1] if not x.startswith("de")]
+            scores = np.where(np.array(scores) == 'Infinity', np.nan, np.array(scores)).astype('float64')
+            scores[np.isnan(scores)] = np.nanmax(scores)
             out[name + "-" + str(k)] = minmax_scale(scores) if NORMALIZE_OSF else scores
     out['label'] = labels
     return out
