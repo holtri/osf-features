@@ -46,14 +46,18 @@ def calculate_osf(filename):
 
 
 def process_file(file):
-    logging.info(f"Processing '{file}'")
-    output = calculate_osf(file)
     input_path, input_file = os.path.split(file)
     output_file = input_file.split(".")[0] + '_OSF.csv'
     output_dir = os.path.join(OUTPUT_ROOT, input_path.split(os.sep)[-1])
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    output.to_csv(output_dir + os.sep + output_file, index=False)
+    output_path = os.path.join(output_dir, output_file)
+
+    if os.path.isfile(output_path):
+        logging.warning(f"Skipping'{file}'. Output file already exists.")
+    else:
+        logging.info(f"Processing '{file}'.")
+        output = calculate_osf(file)
+        os.makedirs(output_dir, exist_ok=True)
+        output.to_csv(output_path, index=False)
 
 
 def main():
